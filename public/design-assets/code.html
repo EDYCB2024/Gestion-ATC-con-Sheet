@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#d3e4fe",
+                        "on-primary-fixed": "#373f54",
+                        "on-tertiary-fixed": "#00121d",
+                        "on-secondary-container": "#435368",
+                        "on-tertiary-fixed-variant": "#003a50",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-dim": "#cfdce3",
+                        "inverse-on-surface": "#9a9d9f",
+                        "tertiary-dim": "#005a7a",
+                        "on-surface": "#2a3439",
+                        "surface-variant": "#d9e4ea",
+                        "inverse-surface": "#0b0f10",
+                        "inverse-primary": "#dae2fd",
+                        "surface-container-highest": "#d9e4ea",
+                        "tertiary-container": "#2db7f2",
+                        "tertiary-fixed": "#2db7f2",
+                        "on-secondary-fixed": "#314055",
+                        "surface-container": "#e8eff3",
+                        "tertiary": "#00668b",
+                        "error-dim": "#4e0309",
+                        "on-primary-fixed-variant": "#535b71",
+                        "surface-tint": "#565e74",
+                        "on-tertiary-container": "#003044",
+                        "secondary-dim": "#44546a",
+                        "primary-fixed": "#dae2fd",
+                        "on-primary-container": "#4a5167",
+                        "error": "#9f403d",
+                        "on-secondary": "#f7f9ff",
+                        "surface-bright": "#f7f9fb",
+                        "primary-dim": "#4a5268",
+                        "on-background": "#2a3439",
+                        "primary-container": "#dae2fd",
+                        "surface-container-low": "#f0f4f7",
+                        "outline-variant": "#a9b4b9",
+                        "on-surface-variant": "#566166",
+                        "secondary-fixed-dim": "#c5d6f0",
+                        "on-secondary-fixed-variant": "#4d5d73",
+                        "primary-fixed-dim": "#ccd4ee",
+                        "error-container": "#fe8983",
+                        "surface": "#f7f9fb",
+                        "on-error": "#fff7f6",
+                        "secondary": "#506076",
+                        "on-error-container": "#752121",
+                        "on-primary": "#f7f7ff",
+                        "surface-container-high": "#e1e9ee",
+                        "outline": "#717c82",
+                        "secondary-fixed": "#d3e4fe",
+                        "on-tertiary": "#f4faff",
+                        "background": "#f7f9fb",
+                        "tertiary-fixed-dim": "#05a9e3",
+                        "primary": "#565e74"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .font-headline { font-family: 'Manrope', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface flex min-h-screen">
+<!-- SideNavBar Component -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-slate-50 dark:bg-slate-900 flex flex-col p-4 gap-2 z-50">
+<div class="flex items-center gap-3 mb-8 px-2">
+<div class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">dataset</span>
+</div>
+<div>
+<h2 class="font-manrope font-black text-blue-600 dark:text-blue-400">Editorial ATC</h2>
+<p class="text-[10px] font-manrope font-semibold uppercase tracking-widest text-slate-500">Case Management</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2.5 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-all duration-300 ease-in-out font-manrope text-sm font-semibold uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 rounded-lg shadow-sm transition-all duration-300 ease-in-out font-manrope text-sm font-semibold uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined" data-icon="work_outline">work_outline</span>
+<span>Cases</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-all duration-300 ease-in-out font-manrope text-sm font-semibold uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span>Customers</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-all duration-300 ease-in-out font-manrope text-sm font-semibold uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span>Reports</span>
+</a>
+</nav>
+<div class="mt-auto space-y-1 pt-4 border-t border-slate-100 dark:border-slate-800">
+<button class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-primary-container text-on-primary py-2.5 rounded-xl font-manrope font-bold text-sm mb-4 transition-transform active:scale-95">
+<span class="material-symbols-outlined">add</span>
+                New Case
+            </button>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-all duration-300 ease-in-out font-manrope text-sm font-semibold uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+<span>Help Center</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<main class="flex-1 ml-64 min-h-screen flex flex-col bg-surface">
+<!-- TopNavBar Component -->
+<header class="w-full sticky top-0 z-40 flex items-center justify-between px-8 py-3 bg-slate-50/85 dark:bg-slate-900/85 backdrop-blur-xl">
+<div class="flex items-center gap-4">
+<div class="relative">
+<span class="absolute inset-y-0 left-3 flex items-center text-slate-400">
+<span class="material-symbols-outlined text-sm">search</span>
+</span>
+<input class="bg-slate-100 dark:bg-slate-800 border-none rounded-full py-1.5 pl-10 pr-4 text-sm w-64 focus:ring-2 focus:ring-blue-600/20 font-manrope" placeholder="Search cases..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<button class="p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</div>
+<div class="h-8 w-px bg-slate-200 dark:bg-slate-700"></div>
+<div class="flex items-center gap-3">
+<img alt="User avatar" class="w-8 h-8 rounded-full object-cover" data-alt="professional headshot of a middle-aged man with short hair wearing a navy blazer, clean studio lighting, corporate portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBB80fmCuOqx1gy19S_c5Klv7pq0Z87FzQ5lv2emwagfGSp6dyqxugKgjkY2Z88xGGUhTz1J6jYOKg97YVOzjjCitpxm8d61ybE_saoMcPi9NHJh6ZUqu32s8E0k8BuJX65VRoOIX8hQCMAQfavNgM1WPKLtvoPIukmXNAcGqCtg_Y2Utw9-8Unj93RcD5eEqWMIfwmmnn_QhzO0hjcErWvOeXuE9AChxYwKVcDiqh7iMgTmotiSiqJCSJy9aL2uOc4lTOubmF2nMWG"/>
+<span class="font-manrope text-sm font-medium tracking-tight text-slate-700 dark:text-slate-300">Alex Thompson</span>
+</div>
+</div>
+</header>
+<!-- Case Detail Content -->
+<div class="p-8 space-y-8 max-w-[1400px] mx-auto w-full">
+<!-- 1. Case Header -->
+<section class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+<div class="flex items-start gap-4">
+<div class="w-1 bg-error rounded-full h-16"></div>
+<div>
+<div class="flex items-center gap-3 mb-1">
+<span class="font-headline font-extrabold text-3xl tracking-tight text-on-surface">#ATC-88421</span>
+<span class="bg-error-container text-on-error-container px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest">High Priority</span>
+</div>
+<h1 class="font-headline text-xl text-on-surface-variant font-medium">Critical: Automated Routing Failure in Sector 7</h1>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="bg-surface-container-highest text-on-surface px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-surface-dim transition-colors">
+<span class="material-symbols-outlined text-lg mr-2">ios_share</span>Export Case
+                    </button>
+<button class="bg-gradient-to-r from-primary to-primary-container text-on-primary px-6 py-2.5 rounded-xl font-bold text-sm shadow-sm hover:opacity-90 transition-opacity">
+                        Resolve Case
+                    </button>
+</div>
+</section>
+<div class="grid grid-cols-12 gap-8 items-start">
+<!-- Main Communication Area -->
+<div class="col-span-12 lg:col-span-8 space-y-8">
+<!-- 2. Customer Summary (Integrated) -->
+<div class="bg-surface-container-low rounded-xl p-6 flex items-center justify-between">
+<div class="flex items-center gap-5">
+<img alt="Customer avatar" class="w-14 h-14 rounded-xl object-cover ring-4 ring-white shadow-sm" data-alt="portrait of a focused air traffic controller in a headset, dimly lit control room background with blue screen glow" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdDKiEBEo2pXfA05cXP6ljIfxiciiXF6M2HmoP8nsi89L3DWttPyH72gaz7X05lfXdiI3P3TM6LkpW_B0NfSD3g5UahOzeCTF02sywK9cO5BoE7veJ6YyqHPATArK2ABld3_UfqHC1ZS7rGzgjaNroUTEVZM8LOA99oVe_yqESfUl7d61b8Caxk82ZSHgBhOFK4rPw2ParawATrFttyBcg9bWA_XAPO000zbapHtW0bCN-dz8vuafx3ZocXz2gNI-dRvQVmZUdGnMa"/>
+<div>
+<h3 class="font-headline font-bold text-lg">Marcus Holloway</h3>
+<p class="text-sm text-on-surface-variant">Senior Ops Lead • United Airways</p>
+</div>
+</div>
+<div class="flex gap-8">
+<div class="text-right">
+<p class="text-[10px] font-bold uppercase tracking-widest text-outline">Contact</p>
+<p class="text-sm font-semibold">m.holloway@united.aero</p>
+</div>
+<div class="text-right border-l border-outline-variant/30 pl-8">
+<p class="text-[10px] font-bold uppercase tracking-widest text-outline">Location</p>
+<p class="text-sm font-semibold">Chicago O'Hare (ORD)</p>
+</div>
+</div>
+</div>
+<!-- 3. Conversation Timeline -->
+<div class="relative">
+<!-- ATC Timeline Thread Line -->
+<div class="absolute left-6 top-0 bottom-0 w-0.5 bg-surface-variant opacity-30"></div>
+<div class="space-y-10">
+<!-- Timeline Entry: Customer -->
+<div class="relative pl-16 group">
+<div class="absolute left-4 top-2 w-4 h-4 rounded-full bg-tertiary shadow-[0_0_0_6px_rgba(255,255,255,1)] z-10"></div>
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm ring-1 ring-black/5 hover:ring-black/10 transition-all">
+<div class="flex justify-between items-center mb-4">
+<span class="text-xs font-bold font-label uppercase tracking-wider text-tertiary">Customer Message • 09:42 AM</span>
+<span class="material-symbols-outlined text-outline text-lg">more_horiz</span>
+</div>
+<p class="text-on-surface-variant leading-relaxed">
+                                        We've noticed a significant lag in the routing updates for Sector 7. Several aircraft had to be manually re-vectored because the automated sequence failed to trigger. This is impacting our peak hour throughput. Please advise on immediate remediation steps.
+                                    </p>
+</div>
+</div>
+<!-- Timeline Entry: Agent Response -->
+<div class="relative pl-16">
+<div class="absolute left-4 top-2 w-4 h-4 rounded-full bg-primary-dim shadow-[0_0_0_6px_rgba(255,255,255,1)] z-10"></div>
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm ring-1 ring-black/5">
+<div class="flex justify-between items-center mb-4">
+<span class="text-xs font-bold font-label uppercase tracking-wider text-primary">Alex Thompson • 10:05 AM</span>
+<span class="bg-tertiary-container/30 text-on-tertiary-container text-[10px] font-bold px-2 py-0.5 rounded uppercase">Internal Ref: S7-LOG</span>
+</div>
+<p class="text-on-surface-variant leading-relaxed italic border-l-2 border-primary-container pl-4 mb-4">
+                                        Investigating system logs for Sector 7 routing nodes. Initial diagnostics suggest a synchronization drift in the primary server cluster.
+                                    </p>
+<p class="text-on-surface-variant leading-relaxed">
+                                        Hi Marcus, I'm currently running a deep scan on the Sector 7 nodes. Our preliminary telemetry shows a sync issue. I've escalated this to the Network Engineering team for a forced re-sync.
+                                    </p>
+</div>
+</div>
+</div>
+</div>
+<!-- 5. Text Editor Area -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm ring-1 ring-black/5 mt-12">
+<div class="flex items-center gap-4 mb-4 pb-4 border-b border-surface-variant/30">
+<button class="text-sm font-bold text-primary border-b-2 border-primary pb-4 -mb-4">Reply to Customer</button>
+<button class="text-sm font-semibold text-outline pb-4 -mb-4 hover:text-on-surface-variant transition-colors">Internal Note</button>
+</div>
+<div class="min-h-[160px] p-4 bg-surface rounded-lg mb-4">
+<p class="text-on-surface-variant text-sm">Type your response here...</p>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex gap-2">
+<button class="p-2 text-outline hover:bg-surface-container-high rounded-lg transition-colors"><span class="material-symbols-outlined">format_bold</span></button>
+<button class="p-2 text-outline hover:bg-surface-container-high rounded-lg transition-colors"><span class="material-symbols-outlined">attach_file</span></button>
+<button class="p-2 text-outline hover:bg-surface-container-high rounded-lg transition-colors"><span class="material-symbols-outlined">image</span></button>
+</div>
+<button class="bg-primary text-on-primary px-8 py-2.5 rounded-xl font-bold text-sm hover:opacity-90 transition-all flex items-center gap-2">
+                                Send Message <span class="material-symbols-outlined text-sm">send</span>
+</button>
+</div>
+</div>
+</div>
+<!-- 4. Sidebar/Panel for Actions -->
+<aside class="col-span-12 lg:col-span-4 space-y-6">
+<!-- Case Status Card -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm border border-transparent">
+<h4 class="font-headline font-bold text-sm mb-5 flex items-center justify-between">
+                            Case Management
+                            <span class="material-symbols-outlined text-outline text-sm">shield</span>
+</h4>
+<div class="space-y-4">
+<div>
+<label class="text-[10px] font-bold uppercase tracking-widest text-outline block mb-2">Current Status</label>
+<div class="relative">
+<select class="w-full bg-surface-container-low border-none rounded-lg py-2.5 px-4 text-sm font-semibold appearance-none">
+<option>In Progress</option>
+<option>Pending Verification</option>
+<option>Escalated</option>
+<option>On Hold</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-2.5 text-outline pointer-events-none">expand_more</span>
+</div>
+</div>
+<div>
+<label class="text-[10px] font-bold uppercase tracking-widest text-outline block mb-2">Assigned Agent</label>
+<div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-lg">
+<img alt="Agent avatar" class="w-8 h-8 rounded-full object-cover" data-alt="professional male portrait with warm lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCENtS-y3Mb_kEGRi_kkXpo_H8_ue7jZkwsyGLUkitaQjaWNJX6kgHVpFz4cNf7XoWNz9QV4-s3Ftj6Rm_ZcyJZAHpU_ooVg1TZjlOpYuclwklXelLueqqgZBkM4ENPXPDp5yUNyQ0Ju01NpKOxRgEHz-5jj0QLlJK847qeORd9buGbGWRZEfW32xaRsveWFIVrcFy2Nl5Nx1Lk5lShvO5Ke6Ya9uVMF0TGp8pOrvdwAhkgnaA1fTx8z3CDTVt8afdd--4aqhFCeZYe"/>
+<div class="flex-1">
+<p class="text-sm font-bold">Alex Thompson</p>
+<p class="text-[10px] text-on-surface-variant">Lead Resolver</p>
+</div>
+<button class="text-tertiary text-xs font-bold">Reassign</button>
+</div>
+</div>
+</div>
+</div>
+<!-- SLA Information -->
+<div class="bg-surface-container-low rounded-xl p-6">
+<h4 class="font-headline font-bold text-sm mb-4">SLA Monitoring</h4>
+<div class="space-y-4">
+<div class="flex justify-between items-center text-sm">
+<span class="text-on-surface-variant">First Response</span>
+<span class="text-tertiary font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">check_circle</span> Met
+                                </span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span class="text-on-surface-variant">Next Update In</span>
+<span class="text-error font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">timer</span> 14m 02s
+                                </span>
+</div>
+<div class="w-full bg-surface-container-highest rounded-full h-1.5 overflow-hidden">
+<div class="bg-error h-full w-4/5"></div>
+</div>
+</div>
+</div>
+<!-- Related Items -->
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm">
+<h4 class="font-headline font-bold text-sm mb-4">Related Cases</h4>
+<div class="space-y-4">
+<a class="block group" href="#">
+<p class="text-xs font-bold text-primary group-hover:underline">#ATC-88402</p>
+<p class="text-sm text-on-surface-variant line-clamp-1">Sector 7 Power Outage Reporting</p>
+</a>
+<a class="block group" href="#">
+<p class="text-xs font-bold text-primary group-hover:underline">#ATC-87991</p>
+<p class="text-sm text-on-surface-variant line-clamp-1">Automated Handover Delay</p>
+</a>
+</div>
+<button class="w-full mt-6 text-center text-xs font-bold text-outline hover:text-primary transition-colors">
+                            View All History
+                        </button>
+</div>
+</aside>
+</div>
+</div>
+</main>
+</body></html>
