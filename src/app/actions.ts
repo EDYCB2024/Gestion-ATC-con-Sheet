@@ -8,7 +8,7 @@ import { revalidateTag } from "next/cache";
  */
 export async function syncData() {
   try {
-    revalidateTag("cases-data");
+    revalidateTag("cases-data", "default");
     console.log("[Server Action] Cache invalidated for 'cases-data'");
     return { success: true };
   } catch (error) {
