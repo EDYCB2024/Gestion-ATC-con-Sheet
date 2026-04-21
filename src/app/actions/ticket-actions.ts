@@ -47,7 +47,7 @@ export async function submitTicketAction(formData: any) {
     const result = await createCase(caseData);
     
     if (result.success) {
-      revalidateTag('cases-data');
+      revalidateTag('cases-data', 'default');
       return { success: true };
     } else {
       return { success: false, error: result.error || "Error desconocido al guardar en Google Sheets" };
