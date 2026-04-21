@@ -1,22 +1,16 @@
 "use client";
 
 import React from "react";
-import { Search, Bell, Settings } from "lucide-react";
+import { Bell, Moon, Sun } from "lucide-react";
+import { useTheme } from "@/components/providers/ThemeProvider";
 
 export function TopBar() {
+  const { theme, toggleTheme } = useTheme();
+
   return (
     <header className="w-full sticky top-0 z-40 flex items-center justify-between px-8 py-4 bg-surface/85 backdrop-blur-xl transition-all">
       <div className="flex items-center gap-4">
-        <div className="relative group">
-          <span className="absolute inset-y-0 left-3 flex items-center text-on-surface-variant/40 group-focus-within:text-primary transition-colors">
-            <Search className="w-4 h-4" />
-          </span>
-          <input
-            type="text"
-            placeholder="Search cases..."
-            className="bg-surface-container-low border-none rounded-full py-2 pl-10 pr-4 text-sm w-80 focus:ring-2 focus:ring-primary/10 font-headline transition-all outline-none"
-          />
-        </div>
+        {/* Search removed by request */}
       </div>
 
       <div className="flex items-center gap-6">
@@ -25,8 +19,16 @@ export function TopBar() {
             <Bell className="w-5 h-5" />
             <span className="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border-2 border-surface"></span>
           </button>
-          <button className="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors">
-            <Settings className="w-5 h-5" />
+          <button 
+            onClick={toggleTheme}
+            className="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors flex items-center gap-2 group"
+            title={theme === 'light' ? 'Activar Modo Oscuro' : 'Activar Modo Claro'}
+          >
+            {theme === 'light' ? (
+              <Moon className="w-5 h-5 group-hover:text-primary transition-colors" />
+            ) : (
+              <Sun className="w-5 h-5 group-hover:text-primary transition-colors" />
+            )}
           </button>
         </div>
         
@@ -42,7 +44,7 @@ export function TopBar() {
             <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-surface"></span>
           </div>
           <div className="flex flex-col">
-            <span className="font-headline text-sm font-bold text-on-surface">Alex Thompson</span>
+            <span className="font-headline text-sm font-bold text-on-surface">Admin Central</span>
             <span className="text-[10px] uppercase tracking-wider text-on-surface-variant font-bold opacity-60 leading-none">
               Lead Resolver
             </span>

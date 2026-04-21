@@ -83,7 +83,7 @@ export default async function CasesTablePage(props: {
           <table className="w-full text-left border-collapse min-w-[2000px]">
             <thead className="sticky top-0 z-10 bg-surface-container-lowest border-b border-surface-variant/20">
               <tr>
-                <th className="p-6 text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant opacity-40 sticky left-0 bg-surface-container-lowest z-20">CASO #</th>
+                <th className="p-6 text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant opacity-40 sticky left-0 bg-surface-container-lowest z-20">#Ticket</th>
                 <th className="p-6 text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant opacity-40">FECHA</th>
                 <th className="p-6 text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant opacity-40">SERIAL</th>
                 <th className="p-6 text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant opacity-40">OPERADORA</th>

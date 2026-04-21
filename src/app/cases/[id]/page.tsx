@@ -200,10 +200,10 @@ export default async function CaseDetailPage({ params }: { params: { id: string 
                 <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant opacity-40 block mb-2">Assigned Agent</label>
                 <div className="flex items-center gap-3 p-4 bg-surface-container-low rounded-xl">
                   <div className="w-10 h-10 rounded-full bg-primary-container/40 flex items-center justify-center font-headline font-black text-primary text-sm shadow-inner">
-                    AT
+                    AC
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-bold text-on-surface">Alex Thompson</p>
+                    <p className="text-sm font-bold text-on-surface">Admin Central</p>
                     <p className="text-[10px] font-bold text-on-surface-variant opacity-60 uppercase tracking-tighter">Lead Resolver</p>
                   </div>
                   <button className="text-tertiary text-xs font-black hover:underline px-2">Reassign</button>

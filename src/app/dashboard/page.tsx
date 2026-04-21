@@ -9,7 +9,8 @@ import {
   TrendingUp,
   LayoutDashboard,
   Calendar,
-  Zap
+  Zap,
+  Activity
 } from "lucide-react";
 
 export default async function DashboardPage() {
@@ -37,12 +38,15 @@ export default async function DashboardPage() {
 
   const responseTimes: number[] = [];
   const agentPerformance: Record<string, { totalTime: number, count: number, closed: number }> = {};
+  const groupPerformance: Record<string, number> = {};
 
   validCases.forEach(c => {
     const reportMin = calculateMinutes(c.horaDeReporte);
     const attentionMin = calculateMinutes(c.horaDeAtencion);
     const agent = c.analistaOperacionesTecnicas || "Sin Asignar";
+    const group = c.reportadoEn || "Sin Grupo";
     
+    // Agent Logic
     if (!agentPerformance[agent]) {
       agentPerformance[agent] = { totalTime: 0, count: 0, closed: 0 };
     }
@@ -51,13 +55,14 @@ export default async function DashboardPage() {
     if (isClosed) agentPerformance[agent].closed++;
     agentPerformance[agent].count++;
 
+    // Group Logic
+    groupPerformance[group] = (groupPerformance[group] || 0) + 1;
+
     if (reportMin !== null && attentionMin !== null) {
-      // Handle day rollover if necessary (basic diff)
       let diff = attentionMin - reportMin;
-      if (diff < 0) diff += 1440; // Add 24 hours in mins
+      if (diff < 0) diff += 1440; 
       
-      // Filter out outliers (e.g., > 12 hours)
-      if (diff > 0 && diff < 720) {
+      if (diff > 0 && diff < 1440) {
         responseTimes.push(diff);
         agentPerformance[agent].totalTime += diff;
       }
@@ -73,10 +78,9 @@ export default async function DashboardPage() {
   validCases.forEach(c => {
     if (c.fecha) {
       const parts = String(c.fecha).split("-");
-      // Assume YYYY-MM-DD or MM/DD/YYYY - let's try to get Month-Year
       let label = "Unknown";
       if (parts.length >= 2) {
-        label = `${parts[1]}-${parts[0]}`; // MM-YYYY
+        label = `${parts[1]}-${parts[0]}`; 
       } else {
         const d = new Date(c.fecha);
         if (!isNaN(d.getTime())) {
@@ -93,7 +97,7 @@ export default async function DashboardPage() {
       const [m2, y2] = b[0].split("-").map(Number);
       return (y1 * 12 + m1) - (y2 * 12 + m2);
     })
-    .slice(-6); // Last 6 months
+    .slice(-6); 
 
   const kpis = [
     { label: "Casos Totales", value: totalCases, icon: BarChart3, color: "text-primary", bg: "bg-primary/10" },
@@ -134,45 +138,75 @@ export default async function DashboardPage() {
       </section>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Monthly Trend */}
-        <section className="bg-surface-container-low rounded-[2.5rem] p-10 border border-surface-variant/10 space-y-8">
-          <h2 className="font-headline font-black text-xs uppercase tracking-[0.4em] text-on-surface-variant opacity-60 flex items-center gap-3">
-            <TrendingUp className="w-4 h-4 text-primary" /> Tendencia por Mes
-          </h2>
-          <div className="space-y-6">
-            {sortedMonths.map(([month, count]) => {
-              const max = Math.max(...Object.values(monthStats));
-              const height = (count / max) * 100;
-              return (
-                <div key={month} className="space-y-2">
-                  <div className="flex justify-between items-center px-1">
-                    <span className="font-headline text-[13px] font-black text-on-surface">{month}</span>
-                    <span className="font-headline text-[13px] font-black text-primary">{count} casos</span>
+        {/* Left Column: Trend & Group Progress */}
+        <div className="space-y-8">
+          {/* Monthly Trend */}
+          <section className="bg-surface-container-low rounded-[2.5rem] p-10 border border-surface-variant/10 space-y-8 shadow-sm">
+            <h2 className="font-headline font-black text-xs uppercase tracking-[0.4em] text-on-surface-variant opacity-60 flex items-center gap-3">
+              <TrendingUp className="w-4 h-4 text-primary" /> Tendencia Mensual
+            </h2>
+            <div className="space-y-6">
+              {sortedMonths.map(([month, count]) => {
+                const max = Math.max(...Object.values(monthStats));
+                const height = (count / max) * 100;
+                return (
+                  <div key={month} className="space-y-2">
+                    <div className="flex justify-between items-center px-1">
+                      <span className="font-headline text-[13px] font-black text-on-surface">{month}</span>
+                      <span className="font-headline text-[13px] font-black text-primary">{count}</span>
+                    </div>
+                    <div className="h-2 w-full bg-surface-variant/10 rounded-full overflow-hidden">
+                      <div className="h-full bg-primary rounded-full" style={{ width: `${height}%` }}></div>
+                    </div>
                   </div>
-                  <div className="h-3 w-full bg-surface-variant/20 rounded-full overflow-hidden">
-                    <div className="h-full bg-primary rounded-full" style={{ width: `${height}%` }}></div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
+                );
+              })}
+            </div>
+          </section>
 
-        {/* Top Agents by Efficiency */}
-        <section className="bg-surface-container-low rounded-[2.5rem] p-10 border border-surface-variant/10 space-y-8">
+          {/* Group Statistics */}
+          <section className="bg-surface-container-low rounded-[2.5rem] p-10 border border-surface-variant/10 space-y-8 shadow-sm">
+            <h2 className="font-headline font-black text-xs uppercase tracking-[0.4em] text-on-surface-variant opacity-60 flex items-center gap-3">
+              <Activity className="w-4 h-4 text-primary" /> Carga por Grupo Reportado
+            </h2>
+            <div className="space-y-6">
+              {Object.entries(groupPerformance)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 6)
+                .map(([group, count]) => {
+                  const max = Math.max(...Object.values(groupPerformance));
+                  const width = (count / max) * 100;
+                  return (
+                    <div key={group} className="space-y-2">
+                      <div className="flex justify-between items-center px-1">
+                        <span className="font-headline text-[12px] font-black text-on-surface truncate pr-4">{group}</span>
+                        <span className="font-headline text-[12px] font-black text-primary">{count}</span>
+                      </div>
+                      <div className="h-1.5 w-full bg-surface-variant/10 rounded-full overflow-hidden">
+                        <div className="h-full bg-primary rounded-full" style={{ width: `${width}%` }}></div>
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+          </section>
+        </div>
+
+        {/* Right Column: Agent Efficiency */}
+        <section className="bg-surface-container-low rounded-[2.5rem] p-10 border border-surface-variant/10 space-y-8 shadow-sm h-full">
           <h2 className="font-headline font-black text-xs uppercase tracking-[0.4em] text-on-surface-variant opacity-60 flex items-center gap-3">
             <Users className="w-4 h-4 text-primary" /> Eficiencia por Analista
           </h2>
           <div className="space-y-6">
             {Object.entries(agentPerformance)
               .sort((a, b) => b[1].closed - a[1].closed)
-              .slice(0, 6)
+              .slice(0, 8)
               .map(([agent, stats]) => {
                 const efficiency = stats.count > 0 ? Math.round((stats.closed / stats.count) * 100) : 0;
                 return (
-                  <div key={agent} className="p-4 bg-surface-container-highest/20 rounded-2xl border border-surface-variant/5">
+                  <div key={agent} className="p-4 bg-surface-container-highest/20 rounded-2xl border border-surface-variant/5 group hover:bg-surface-container-highest transition-colors">
                     <div className="flex items-center justify-between mb-2">
-                       <span className="font-headline text-xs font-black text-on-surface truncate pr-4">{agent}</span>
+                       <span className="font-headline text-xs font-black text-on-surface truncate pr-4 group-hover:text-primary transition-colors">{agent}</span>
                        <span className="text-xs font-black text-secondary">{efficiency}% Efic.</span>
                     </div>
                     <div className="flex items-center gap-6">

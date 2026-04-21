@@ -5,14 +5,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { 
   LayoutDashboard, 
-  Briefcase, 
-  Users, 
-  BarChart3, 
-  Plus, 
   HelpCircle,
   Table,
   Users2,
-  Activity
+  Activity,
+  Wrench,
+  Ticket
 } from "lucide-react";
 
 const navigation = [
@@ -20,7 +18,8 @@ const navigation = [
   { label: "Monitoreo", icon: Activity, href: "/" },
   { label: "Casos (Tabla)", icon: Table, href: "/cases" },
   { label: "Agentes", icon: Users2, href: "/agents" },
-  { label: "Métricas", icon: BarChart3, href: "/metrics" },
+  { label: "Servicio Técnico", icon: Wrench, href: "/technical-service" },
+  { label: "Tickets", icon: Ticket, href: "/tickets" },
 ];
 
 export function Sidebar() {
@@ -65,10 +64,6 @@ export function Sidebar() {
       </nav>
 
       <div className="mt-auto space-y-3 pt-6 border-t border-surface-variant/20">
-        <button className="w-full flex items-center justify-center gap-2 bg-primary text-on-primary py-3.5 rounded-xl font-headline font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/10 transition-transform active:scale-[0.98] hover:opacity-95">
-          <Plus className="w-4 h-4" />
-          New Case
-        </button>
         <Link
           href="/help"
           className="flex items-center gap-4 px-4 py-2 text-on-surface-variant opacity-40 hover:opacity-100 transition-all font-headline text-[10px] font-black uppercase tracking-widest"
