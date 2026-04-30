@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Bell, Moon, Sun } from "lucide-react";
+import { Bell, Moon, Sun, LogOut } from "lucide-react";
 import { useTheme } from "@/components/providers/ThemeProvider";
 
 export function TopBar() {
@@ -36,11 +36,9 @@ export function TopBar() {
         
         <div className="flex items-center gap-3 group cursor-pointer">
           <div className="relative">
-            <img
-              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-              alt="User avatar"
-              className="w-9 h-9 rounded-full object-cover ring-2 ring-transparent group-hover:ring-primary/20 transition-all"
-            />
+            <div className="w-9 h-9 rounded-full bg-primary-container/40 flex items-center justify-center font-headline font-black text-primary text-xs shadow-inner ring-2 ring-transparent group-hover:ring-primary/20 transition-all">
+              AC
+            </div>
             <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-surface"></span>
           </div>
           <div className="flex flex-col">
@@ -50,6 +48,16 @@ export function TopBar() {
             </span>
           </div>
         </div>
+
+        <div className="h-8 w-px bg-surface-variant/30"></div>
+
+        <button 
+          onClick={() => window.location.href = '/login'}
+          className="p-2 text-on-surface-variant hover:bg-error/10 hover:text-error rounded-full transition-colors flex items-center gap-2 group"
+          title="Cerrar Sesión"
+        >
+          <LogOut className="w-5 h-5" />
+        </button>
       </div>
     </header>
   );

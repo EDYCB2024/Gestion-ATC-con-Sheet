@@ -37,6 +37,7 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
 
   const handleSend = async (customMessage?: string) => {
     const textToSend = customMessage || input;
+    console.log("[CLIENT] handleSend triggered with:", textToSend);
     if (!textToSend.trim() || isTyping) return;
 
     const userMessage: Message = {
@@ -70,7 +71,7 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="flex flex-col h-[550px] w-[400px] bg-surface/95 backdrop-blur-2xl border border-surface-variant/30 rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in slide-in-from-bottom-8 duration-300">
+    <div className="flex flex-col h-[550px] max-h-[80vh] w-[400px] bg-surface/95 backdrop-blur-2xl border border-surface-variant/30 rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in slide-in-from-bottom-8 duration-300">
       {/* Header */}
       <div className="bg-primary p-5 flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -140,12 +141,12 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
 
       {/* Suggestions */}
       {!isTyping && currentSuggestions.length > 0 && (
-        <div className="px-5 pb-2 flex flex-wrap gap-2 overflow-x-auto scrollbar-hide">
+        <div className="px-5 pb-2 flex gap-2 overflow-x-auto scrollbar-hide">
           {currentSuggestions.map((suggestion) => (
             <button
               key={suggestion}
               onClick={() => handleSend(suggestion)}
-              className="text-[10px] font-black bg-surface-container-low text-primary px-3 py-2 rounded-full border border-primary/10 hover:bg-primary hover:text-on-primary transition-all whitespace-nowrap uppercase tracking-wider"
+              className="shrink-0 text-[10px] font-black bg-surface-container-low text-primary px-3 py-2 rounded-full border border-primary/10 hover:bg-primary hover:text-on-primary transition-all whitespace-nowrap uppercase tracking-wider"
             >
               {suggestion}
             </button>
@@ -165,7 +166,7 @@ export function ChatWindow({ onClose }: { onClose: () => void }) {
             className="w-full bg-surface-container-low border-none rounded-2xl py-4 pl-5 pr-12 text-sm focus:ring-2 focus:ring-primary/20 transition-all outline-none text-on-surface"
           />
           <button
-            onClick={handleSend}
+            onClick={() => handleSend()}
             disabled={!input.trim() || isTyping}
             className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-primary text-on-primary rounded-xl hover:opacity-90 disabled:opacity-30 disabled:grayscale transition-all shadow-lg shadow-primary/20"
           >
