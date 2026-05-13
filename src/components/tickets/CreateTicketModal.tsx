@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, Save, Building2, CreditCard, Radio, User, Phone, MapPin, AlertCircle, Landmark, Loader2 } from "lucide-react";
+import { X, Save, Building2, CreditCard, Radio, User, Phone, MapPin, AlertCircle, Landmark, Loader2, Ticket } from "lucide-react";
 import { submitTicketAction } from "@/app/actions/ticket-actions";
+import { useNotifications } from "@/components/providers/NotificationProvider";
+import { cn } from "@/lib/utils";
 
 interface CreateTicketModalProps {
   isOpen: boolean;
@@ -11,17 +13,18 @@ interface CreateTicketModalProps {
 }
 
 export function CreateTicketModal({ isOpen, onClose, defaultTicketId }: CreateTicketModalProps) {
+  const { addNotification } = useNotifications();
   const [formData, setFormData] = useState({
     caso: defaultTicketId || "",
     nombreComercio: "",
     rif: "",
-    serialPunto: "",
-    banco: "",
+    serial: "",
     operadora: "",
     personaContacto: "",
     telefonoContacto: "",
-    zonaCiudad: "",
-    fallaReportada: "",
+    ciudad: "",
+    fallaReportadaCliente: "",
+    asignarGrupo: "",
   });
 
   // Update caso when defaultTicketId changes and modal opens
@@ -52,38 +55,28 @@ export function CreateTicketModal({ isOpen, onClose, defaultTicketId }: CreateTi
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validation
-    const newErrors: Record<string, string> = {};
-    if (!formData.caso) newErrors.caso = "Requerido";
-    if (!formData.nombreComercio) newErrors.nombreComercio = "Requerido";
-    if (!formData.rif) newErrors.rif = "Requerido";
-    if (!formData.serialPunto) newErrors.serialPunto = "Requerido";
-    if (!formData.telefonoContacto) newErrors.telefonoContacto = "Requerido";
-    if (!formData.fallaReportada) newErrors.fallaReportada = "Requerido";
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-
     setIsSubmitting(true);
     try {
       const result = await submitTicketAction(formData);
       if (result.success) {
-        alert("Ticket guardado exitosamente en Google Sheets");
+        addNotification(
+          "Ticket Creado",
+          `Ticket #${formData.caso} asignado a ${formData.asignarGrupo || 'Sin Grupo'}`,
+          "success"
+        );
         onClose();
         // Reset form
         setFormData({
             caso: "",
             nombreComercio: "",
             rif: "",
-            serialPunto: "",
-            banco: "",
+            serial: "",
             operadora: "",
             personaContacto: "",
             telefonoContacto: "",
-            zonaCiudad: "",
-            fallaReportada: "",
+            ciudad: "",
+            fallaReportadaCliente: "",
+            asignarGrupo: "",
         });
       } else {
         alert(`Error al guardar: ${result.error}`);
@@ -96,99 +89,129 @@ export function CreateTicketModal({ isOpen, onClose, defaultTicketId }: CreateTi
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 overflow-y-auto">
-      <div className="bg-surface-container-lowest w-full max-w-xl rounded-3xl shadow-2xl overflow-hidden border border-surface-variant/30 animate-in fade-in zoom-in duration-300 my-8">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-on-surface/20 backdrop-blur-md animate-in fade-in duration-500" onClick={onClose} />
+      
+      <div className="bg-white/90 backdrop-blur-2xl w-full max-w-xl rounded-[40px] shadow-2xl overflow-hidden border border-outline-variant/30 animate-in fade-in zoom-in duration-500 relative z-10">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-surface-variant/20 flex items-center justify-between bg-primary/5">
-          <div>
-            <h2 className="text-lg font-headline font-black text-on-surface tracking-tight">Crear Nuevo Ticket</h2>
-            <p className="text-[11px] text-on-surface-variant opacity-70">Siga el formato de reporte para el servicio técnico.</p>
+        <div className="px-10 py-8 border-b border-outline-variant/30 flex items-center justify-between bg-primary/[0.02]">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center">
+              <Ticket className="text-primary w-6 h-6" />
+            </div>
+            <div>
+              <h2 className="text-xl font-headline font-black text-on-surface tracking-tighter uppercase leading-none">Nuevo Ticket</h2>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/40 mt-1.5">Registro de Caso ATC</p>
+            </div>
           </div>
           <button 
             onClick={onClose}
-            className="p-2 hover:bg-surface-variant/40 rounded-full transition-colors"
+            className="p-3 hover:bg-red-50 hover:text-red-500 rounded-2xl transition-all active:scale-90"
           >
-            <X className="w-5 h-5 text-on-surface-variant" />
+            <X className="w-5 h-5 opacity-40" />
           </button>
         </div>
 
-        {/* Form in Table Style */}
+        {/* Form */}
         <form onSubmit={handleSubmit} className="p-0">
-          <div className="w-full">
-            {/* Table Header */}
-            <div className="flex bg-primary/5 border-b border-surface-variant/20 px-6 py-2">
-              <div className="flex-1 text-[10px] font-headline font-black uppercase tracking-[0.2em] text-primary/60">Campo</div>
-              <div className="flex-1 text-[10px] font-headline font-black uppercase tracking-[0.2em] text-primary/60 pl-4">Valor</div>
-            </div>
-
-            {/* Table Body */}
-            <div className="divide-y divide-surface-variant/10">
+          <div className="max-h-[60vh] overflow-y-auto px-10 py-6 custom-scrollbar">
+            <div className="space-y-6">
               {[
-                { id: 'caso', label: '#Ticket', required: true, placeholder: 'Ej: 12345' },
-                { id: 'nombreComercio', label: 'NOMBRE COMERCIO', required: true, placeholder: 'Ej: Comercio S.A' },
-                { id: 'rif', label: 'RIF', required: true, placeholder: 'J-00000000-0' },
-                { id: 'serialPunto', label: 'SERIAL DEL PUNTO', required: true, placeholder: '12345678' },
-                { id: 'banco', label: 'BANCO', required: false, placeholder: 'Ej: Banesco' },
-                { id: 'operadora', label: 'OPERADORA', required: false, placeholder: 'Movistar / Digitel' },
-                { id: 'personaContacto', label: 'PERSONA CONTACTO', required: false, placeholder: 'Nombre del encargado' },
-                { id: 'telefonoContacto', label: 'TELÉFONO CONTACTO', required: true, placeholder: '0412-0000000' },
-                { id: 'zonaCiudad', label: 'ZONA/CIUDAD', required: false, placeholder: 'Ej: Caracas' },
-                { id: 'fallaReportada', label: 'FALLA REPORTADA', required: true, placeholder: 'Describa el problema', isTextArea: true },
-              ].map((field, index) => (
-                <div 
-                  key={field.id} 
-                  className={`flex items-center px-6 py-2 transition-colors hover:bg-primary/5 ${index % 2 === 0 ? 'bg-surface-container-lowest' : 'bg-surface-container-low/30'}`}
-                >
-                  <div className="flex-1 text-[12px] font-headline font-bold text-on-surface flex items-center gap-2 uppercase tracking-tight">
+                { id: 'caso', label: 'Nro Caso', icon: AlertCircle, placeholder: 'Asignado automáticamente', readOnly: true },
+                { id: 'nombreComercio', label: 'Nombre Comercio', icon: Building2, placeholder: 'Nombre del establecimiento' },
+                { id: 'rif', label: 'RIF', icon: CreditCard, placeholder: 'J-00000000-0' },
+                { id: 'serial', label: 'Serial POS', icon: Radio, placeholder: 'Serial del equipo' },
+                { id: 'operadora', label: 'Operadora', icon: Radio, placeholder: 'Movistar / Digitel / Cantv' },
+                { id: 'personaContacto', label: 'Persona Contacto', icon: User, placeholder: 'Nombre del contacto' },
+                { id: 'telefonoContacto', label: 'Teléfono', icon: Phone, placeholder: '04XX-0000000' },
+                { id: 'ciudad', label: 'Ciudad', icon: MapPin, placeholder: 'Ej: Caracas' },
+                { 
+                  id: 'asignarGrupo', 
+                  label: 'Asignar Grupo', 
+                  icon: User,
+                  isSelect: true, 
+                  options: [
+                    'Operaciones y ST',
+                    'Megapos',
+                    'Token Pagos',
+                    'Pos Comercial',
+                    'Instapago',
+                    'Tu punto Plus',
+                    'Servinet',
+                    'Punto Pos',
+                    'Puntpago'
+                  ]
+                },
+                { id: 'fallaReportadaCliente', label: 'Falla Reportada', icon: AlertCircle, placeholder: 'Descripción de la falla...', isTextArea: true },
+              ].map((field) => (
+                <div key={field.id} className="space-y-2 group">
+                  <label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/50 px-1 group-focus-within:text-primary transition-colors">
+                    <field.icon className="w-3.5 h-3.5" />
                     {field.label}
-                    {field.required && <span className="text-error font-black">*</span>}
-                  </div>
-                  <div className="flex-1 pl-4">
-                    {field.isTextArea ? (
-                      <textarea
-                        name={field.id}
-                        value={(formData as any)[field.id]}
-                        onChange={handleChange}
-                        placeholder={field.placeholder}
-                        rows={1}
-                        className={`w-full bg-transparent border-none focus:ring-0 text-[12px] font-body text-on-surface-variant placeholder:opacity-30 resize-none py-1 focus:outline-none ${errors[field.id] ? 'text-error' : ''}`}
-                      />
-                    ) : (
-                      <input
-                        type="text"
-                        name={field.id}
-                        value={(formData as any)[field.id]}
-                        onChange={handleChange}
-                        placeholder={field.placeholder}
-                        className={`w-full bg-transparent border-none focus:ring-0 text-[12px] font-body text-on-surface-variant placeholder:opacity-30 focus:outline-none py-1 ${errors[field.id] ? 'text-error placeholder:text-error/30 font-bold' : ''}`}
-                      />
-                    )}
-                    {errors[field.id] && <p className="text-[8px] text-error font-black uppercase tracking-tighter">Requerido</p>}
-                  </div>
+                  </label>
+                  
+                  {field.isTextArea ? (
+                    <textarea
+                      name={field.id}
+                      value={(formData as any)[field.id]}
+                      onChange={handleChange}
+                      placeholder={field.placeholder}
+                      rows={3}
+                      className="w-full bg-surface-container-low/50 border border-outline-variant/30 rounded-2xl px-5 py-4 text-[13px] font-bold text-on-surface placeholder:text-on-surface-variant/20 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:bg-white transition-all shadow-inner"
+                    />
+                  ) : field.isSelect ? (
+                    <select
+                      name={field.id}
+                      value={(formData as any)[field.id]}
+                      onChange={handleChange}
+                      className="w-full bg-surface-container-low/50 border border-outline-variant/30 rounded-2xl px-5 py-4 text-[13px] font-bold text-on-surface focus:outline-none focus:ring-4 focus:ring-primary/10 focus:bg-white transition-all shadow-inner cursor-pointer appearance-none"
+                    >
+                      <option value="">Seleccionar...</option>
+                      {field.options?.map(opt => (
+                        <option key={opt} value={opt}>{opt}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input
+                      type="text"
+                      name={field.id}
+                      value={(formData as any)[field.id]}
+                      onChange={handleChange}
+                      placeholder={field.placeholder}
+                      readOnly={field.readOnly}
+                      className={cn(
+                        "w-full bg-surface-container-low/50 border border-outline-variant/30 rounded-2xl px-5 py-4 text-[13px] font-bold text-on-surface placeholder:text-on-surface-variant/20 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:bg-white transition-all shadow-inner",
+                        field.readOnly && "opacity-50 cursor-not-allowed bg-surface-container-highest/20"
+                      )}
+                    />
+                  )}
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="p-6 bg-surface-container-low/20 border-t border-surface-variant/10 flex gap-3">
+          <div className="p-10 bg-primary/[0.02] border-t border-outline-variant/30 flex gap-4">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-3 rounded-xl border border-surface-variant/50 text-on-surface-variant font-headline font-black text-[10px] uppercase tracking-[0.2em] hover:bg-surface-container-low transition-colors"
+              className="flex-1 px-6 py-4 rounded-2xl border border-outline-variant/50 text-on-surface-variant/60 font-black text-[11px] uppercase tracking-[0.2em] hover:bg-surface-container-low transition-all active:scale-95"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`flex-[2] flex items-center justify-center gap-2 bg-primary text-on-primary py-3 rounded-xl font-headline font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-primary/20 transition-transform active:scale-[0.98] hover:opacity-95 hover:shadow-primary/30 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
+              className={cn(
+                "flex-[2] flex items-center justify-center gap-3 bg-primary text-white py-4 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] shadow-2xl shadow-primary/30 transition-all active:scale-[0.98] hover:opacity-90",
+                isSubmitting && "opacity-50 cursor-not-allowed"
+              )}
             >
               {isSubmitting ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Loader2 className="w-5 h-5 animate-spin" />
               ) : (
-                <Save className="w-4 h-4" />
+                <Save className="w-5 h-5" />
               )}
-              {isSubmitting ? 'Guardando...' : 'Guardar Ticket'}
+              {isSubmitting ? 'Guardando...' : 'Crear Ticket'}
             </button>
           </div>
         </form>

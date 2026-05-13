@@ -10,7 +10,7 @@ export default function PortalLayout({
   return (
     <>
       <Sidebar />
-      <div className="pl-64 flex flex-col min-h-screen">
+      <div className="pl-80 flex flex-col min-h-screen">
         <TopBar />
         <main className="flex-1">
           {children}

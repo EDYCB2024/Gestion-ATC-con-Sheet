@@ -1,30 +1,30 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f4f7fa;
-  --on-surface: #2a3439;
+  --background: #f8f9ff;
+  --on-surface: #0b1c30;
   
-  /* Core Design Tokens - Refined for better contrast */
-  --surface: #f7f9fb;
-  --surface-container-low: #edf1f5; /* Un poco más oscuro para distinción */
+  /* Core Design Tokens - Aligned with POS-CRM */
+  --surface: #f8f9ff;
+  --surface-container-low: #f1f3f9;
   --surface-container-lowest: #ffffff;
-  --surface-bright: #f7f9fb;
-  --surface-variant: #d0dbe2; /* Un poco más oscuro */
+  --surface-bright: #f8f9ff;
+  --surface-variant: #e2e5f0;
   
-  --primary: #4a5167; /* Un gris-azul más profundo */
-  --primary-container: #dae2fd;
+  --primary: #004ac6;
+  --primary-container: #2563eb;
   --on-primary: #ffffff;
   
-  --tertiary: #00668b;
-  --tertiary-container: #2db7f2;
-  --on-tertiary-container: #003044;
+  --tertiary: #943700;
+  --tertiary-container: #bc4800;
+  --on-tertiary-container: #ffffff;
   
-  --error: #9f403d;
-  --error-container: #fe8983;
-  --on-error-container: #752121;
+  --error: #ba1a1a;
+  --error-container: #ffdad6;
+  --on-error-container: #410002;
   
-  --on-surface-variant: #566166;
-  --outline-variant: #a9b4b9;
+  --on-surface-variant: #434655;
+  --outline-variant: #c3c6d7;
 }
 
 html.dark, body.dark {

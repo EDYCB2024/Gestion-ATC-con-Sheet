@@ -1,40 +1,8 @@
-export type CasePriority = "High" | "Medium" | "Low";
+import fs from "fs";
+import path from "path";
 
-export interface ATCCase {
-  caso: string;
-  fecha: string;
-  serial: string;
-  operadora: string;
-  proveedorWifi: string;
-  reportadoEn: string;
-  rif: string;
-  nombreComercio: string;
-  horaDeReporte: string;
-  horaDeAtencion: string;
-  tiempo: string;
-  personaContacto: string;
-  telefonoContacto: string;
-  ciudad: string;
-  estado: string;
-  reportadoPor: string;
-  categoriaDeFalla: string;
-  fallaReportadaCliente: string;
-  analistaOperacionesTecnicas: string;
-  estatusCaso: string;
-  observaciones: string;
-  observacion2: string;
-  observacion3: string;
-  vencimientoCaso: string;
-}
+import { CasePriority, ATCCase, TimelineEvent } from "./types";
 
-export interface TimelineEvent {
-  id: string;
-  caso: string;
-  author: string;
-  type: "Customer Message" | "Agent Response" | "Internal Note";
-  content: string;
-  timestamp: string;
-}
 
 // Mock Data for initial development if ENV is missing
 const MOCK_CASES: ATCCase[] = [
@@ -63,22 +31,57 @@ const MOCK_CASES: ATCCase[] = [
     observacion2: "",
     observacion3: "",
     vencimientoCaso: "2024-04-16 12:42 PM",
+    asignarGrupo: "Operaciones y ST",
+    correo: "soporte@atc.com"
   }
 ];
 
+const LOCAL_DATA_PATH = path.join(process.cwd(), "src/data/cases.json");
+
+function getLocalCases(): ATCCase[] {
+  try {
+    if (fs.existsSync(LOCAL_DATA_PATH)) {
+      const data = fs.readFileSync(LOCAL_DATA_PATH, "utf8");
+      return JSON.parse(data);
+    }
+  } catch (error) {
+    console.error("Error reading local cases:", error);
+  }
+  return [];
+}
+
+function saveLocalCase(newCase: ATCCase) {
+  try {
+    const cases = getLocalCases();
+    // Prevent duplicates by ID
+    const filtered = cases.filter(c => c.caso !== newCase.caso);
+    const updated = [newCase, ...filtered];
+    if (!fs.existsSync(path.dirname(LOCAL_DATA_PATH))) {
+      fs.mkdirSync(path.dirname(LOCAL_DATA_PATH), { recursive: true });
+    }
+    fs.writeFileSync(LOCAL_DATA_PATH, JSON.stringify(updated, null, 2));
+    return true;
+  } catch (error) {
+    console.error("Error saving local case:", error);
+    return false;
+  }
+}
+
 export async function getCases(): Promise<ATCCase[]> {
+  const localCases = getLocalCases();
   const appsScriptUrl = process.env.APPS_SCRIPT_URL;
 
   if (!appsScriptUrl) {
-    console.warn("APPS_SCRIPT_URL not found. Using mock data.");
-    return MOCK_CASES;
+    console.warn("APPS_SCRIPT_URL not found. using local cases + mocks.");
+    return [...localCases, ...MOCK_CASES];
   }
 
   try {
+    console.time("[GoogleSheets] fetchCases");
     
     const response = await fetch(`${appsScriptUrl}?type=cases`, {
       next: { 
-        revalidate: false, 
+        revalidate: 300, // Cache for 5 minutes instead of forever/zero
         tags: ['cases-data'] 
       }
     });
@@ -86,31 +89,33 @@ export async function getCases(): Promise<ATCCase[]> {
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     
     const rawData = await response.json();
+    console.timeEnd("[GoogleSheets] fetchCases");
     
     if (rawData.error) {
       console.error(`[GoogleSheets] API Error: ${rawData.error}`);
       throw new Error(rawData.error);
     }
 
-      const rows = rawData as any[];
-      const cases = rows.map(row => {
-        const cleanRow: any = {};
-        Object.keys(row).forEach(key => {
-          const lowerKey = key.toLowerCase();
-          let value = row[key];
-          
-          // Normalización de nombres de agentes
-          if (typeof value === 'string') {
-            const lowerValue = value.toLowerCase();
-            if (lowerValue.includes("andeliz") && lowerValue.includes("nunez")) {
-              value = "Andelis Núñez";
-            } else if (lowerValue === "andeliz") {
-              value = "Andelis";
-            }
+    console.time("[GoogleSheets] mappingData");
+    const rows = rawData as any[];
+    const cases = rows.map(row => {
+      const cleanRow: any = {};
+      Object.keys(row).forEach(key => {
+        const lowerKey = key.toLowerCase();
+        let value = row[key];
+        
+        // Normalización de nombres de agentes
+        if (typeof value === 'string') {
+          const lowerValue = value.toLowerCase();
+          if (lowerValue.includes("andeliz") && lowerValue.includes("nunez")) {
+            value = "Andelis Núñez";
+          } else if (lowerValue === "andeliz") {
+            value = "Andelis";
           }
+        }
 
-          // Mapeo inteligente de columnas
-          if (lowerKey === "caso" || lowerKey === "nro de caso" || lowerKey === "nro caso" || lowerKey === "ticket") {
+        // Mapeo inteligente de columnas
+        if (lowerKey === "caso" || lowerKey === "nro de caso" || lowerKey === "nro caso" || lowerKey === "ticket") {
           cleanRow.caso = value;
         } else if (lowerKey.includes("caso") && !cleanRow.caso) {
           cleanRow.caso = value;
@@ -123,11 +128,18 @@ export async function getCases(): Promise<ATCCase[]> {
         else if (lowerKey.includes("comercio")) cleanRow.nombreComercio = value;
         else if (lowerKey.includes("estatus")) cleanRow.estatusCaso = value;
         
-        // Mapeo de vencimiento (prioritario si contiene 'venc')
         if (lowerKey.includes("vencimiento") || lowerKey.includes("vencimie") || lowerKey === "venc") {
           cleanRow.vencimientoCaso = value;
         } else if (lowerKey.includes("venc") && !cleanRow.vencimientoCaso) {
           cleanRow.vencimientoCaso = value;
+        }
+        
+        if (lowerKey.includes("asignar") || lowerKey.includes("grupo")) {
+          cleanRow.asignarGrupo = value;
+        }
+
+        if (lowerKey.includes("correo") || lowerKey.includes("email")) {
+          cleanRow.correo = value;
         }
         
         if (!cleanRow[key]) cleanRow[key] = value; 
@@ -135,6 +147,7 @@ export async function getCases(): Promise<ATCCase[]> {
       return cleanRow;
     });
 
+    console.timeEnd("[GoogleSheets] mappingData");
     return cases as ATCCase[];
   } catch (error) {
     console.error("Error fetching cases from Apps Script:", error);
@@ -160,12 +173,15 @@ export async function getTimeline(caseId: string): Promise<TimelineEvent[]> {
         content: "Significant lag in routing updates for Sector 7. Manual vectoring required.",
         timestamp: "2024-04-16T09:42:00Z",
       }
-    ].filter(e => e.caso === caseId);
+    ].filter(e => e.caso === caseId) as TimelineEvent[];
   }
 
   try {
     const response = await fetch(`${appsScriptUrl}?type=timeline&id=${encodeURIComponent(caseId)}`, {
-      next: { revalidate: 0 },
+      next: { 
+        revalidate: 60, // Cache for 60 seconds
+        tags: [`timeline-${caseId}`] 
+      },
     });
 
     if (!response.ok) throw new Error("Network response was not ok");
@@ -180,11 +196,14 @@ export async function getTimeline(caseId: string): Promise<TimelineEvent[]> {
   }
 }
 
-export async function createCase(caseData: Partial<ATCCase>): Promise<{ success: boolean; data?: any; error?: string }> {
+export async function createCase(caseData: Partial<ATCCase>): Promise<{ success: boolean; data?: any; error?: string; message?: string }> {
+  // Always save locally first for "en la web por ahora" persistence
+  saveLocalCase(caseData as ATCCase);
+
   const appsScriptUrl = process.env.APPS_SCRIPT_URL;
 
   if (!appsScriptUrl) {
-    console.warn("APPS_SCRIPT_URL not found. simulating success.");
+    console.warn("APPS_SCRIPT_URL not found. saved locally only.");
     return { success: true };
   }
 

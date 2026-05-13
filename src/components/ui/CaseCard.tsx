@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
-import { ATCCase } from "@/lib/google-sheets";
+import { ATCCase } from "@/lib/types";
+
 import { Clock, AlertCircle } from "lucide-react";
 
 interface CaseCardProps {

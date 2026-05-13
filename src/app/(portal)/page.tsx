@@ -1,6 +1,6 @@
 import React from "react";
 import { getCases } from "@/lib/google-sheets";
-import { RefreshButton } from "@/components/ui/RefreshButton";
+
 import Link from "next/link";
 import { 
   BarChart3, 
@@ -64,7 +64,7 @@ export default async function MonitoringPage() {
               Monitoreo de Vencimientos
             </h1>
           </div>
-          <RefreshButton />
+
         </div>
         <p className="text-on-surface-variant opacity-50 font-medium pl-6">
           Visualización exclusiva de casos técnicos con fecha límite de entrega.

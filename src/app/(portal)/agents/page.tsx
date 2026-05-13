@@ -6,7 +6,8 @@ import {
   Award, 
   Phone, 
   Mail,
-  ChevronRight
+  ChevronRight,
+  UserPlus
 } from "lucide-react";
 import Link from "next/link";
 import { RefreshButton } from "@/components/ui/RefreshButton";
@@ -59,7 +60,16 @@ export default async function AgentsPage() {
             Analistas de Operaciones Técnicas responsables de la red.
           </p>
         </div>
-        <RefreshButton />
+        <div className="flex items-center gap-3">
+          <button 
+            className="flex items-center justify-center gap-3 bg-primary text-on-primary px-8 py-4 rounded-2xl font-headline font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98] hover:shadow-primary/30"
+          >
+            <UserPlus className="w-5 h-5" />
+            Añadir Agente
+          </button>
+          <div className="h-10 w-px bg-surface-variant/20 mx-2 hidden md:block"></div>
+          <RefreshButton />
+        </div>
       </header>
 
       {/* Grid */}

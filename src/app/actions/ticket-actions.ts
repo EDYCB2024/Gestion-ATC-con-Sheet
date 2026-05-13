@@ -1,7 +1,9 @@
 "use server";
 
 import { revalidateTag } from "next/cache";
-import { createCase, ATCCase } from "@/lib/google-sheets";
+import { createCase } from "@/lib/google-sheets";
+import { ATCCase } from "@/lib/types";
+
 
 export async function submitTicketAction(formData: any) {
   try {
@@ -16,21 +18,21 @@ export async function submitTicketAction(formData: any) {
 
     // Map form data to ATCCase structure
     const caseData: Partial<ATCCase> = {
-      caso: formData.caso,
-      nombreComercio: formData.nombreComercio,
-      rif: formData.rif,
-      serial: formData.serialPunto,
-      proveedorWifi: formData.banco || "", // Mapped to provider field as discussed
+      caso: formData.caso || "",
+      nombreComercio: formData.nombreComercio || "",
+      rif: formData.rif || "",
+      serial: formData.serial || "",
       operadora: formData.operadora || "",
       personaContacto: formData.personaContacto || "",
-      telefonoContacto: formData.telefonoContacto,
-      ciudad: formData.zonaCiudad || "",
-      fallaReportadaCliente: formData.fallaReportada,
+      telefonoContacto: formData.telefonoContacto || "",
+      ciudad: formData.ciudad || "",
+      fallaReportadaCliente: formData.fallaReportadaCliente || "",
       fecha: dateStr,
       horaDeReporte: timeStr,
       estatusCaso: "Abierto",
       reportadoEn: "WhatsApp",
       reportadoPor: "Portal ATC",
+      asignarGrupo: formData.asignarGrupo || "",
     };
 
     // Check if the ticket already exists to prevent duplicates
@@ -47,7 +49,7 @@ export async function submitTicketAction(formData: any) {
     const result = await createCase(caseData);
     
     if (result.success) {
-      revalidateTag('cases-data', 'default');
+      revalidateTag('cases-data');
       return { success: true };
     } else {
       return { success: false, error: result.error || "Error desconocido al guardar en Google Sheets" };

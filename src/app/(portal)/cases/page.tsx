@@ -10,7 +10,7 @@ import {
   MoreHorizontal,
   Circle
 } from "lucide-react";
-import { RefreshButton } from "@/components/ui/RefreshButton";
+
 
 export default async function CasesTablePage(props: {
   searchParams: Promise<{ page?: string; q?: string }>;
@@ -26,10 +26,10 @@ export default async function CasesTablePage(props: {
   const filteredCases = allCases.filter(c => {
     if (!query) return true;
     return (
-      (c.rif || "").toLowerCase().includes(query) ||
-      (c.nombreComercio || "").toLowerCase().includes(query) ||
-      (c.serial || "").toString().toLowerCase().includes(query) ||
-      (c.caso || "").toString().toLowerCase().includes(query)
+      String(c.rif || "").toLowerCase().includes(query) ||
+      String(c.nombreComercio || "").toLowerCase().includes(query) ||
+      String(c.serial || "").toLowerCase().includes(query) ||
+      String(c.caso || "").toLowerCase().includes(query)
     );
   });
 
@@ -73,7 +73,7 @@ export default async function CasesTablePage(props: {
             <Filter className="w-4 h-4 text-on-surface-variant" />
           </button>
           <div className="h-10 w-px bg-surface-variant/20 mx-2 hidden md:block"></div>
-          <RefreshButton />
+
         </div>
       </header>
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { getCases } from "@/lib/google-sheets";
-import { RefreshButton } from "@/components/ui/RefreshButton";
+
 import { 
   BarChart3, 
   Users, 
@@ -107,126 +107,136 @@ export default async function DashboardPage() {
   ];
 
   return (
-    <div className="p-10 space-y-12 max-w-7xl mx-auto w-full">
+    <div className="p-10 space-y-12 max-w-[1600px] mx-auto w-full">
       {/* Header */}
-      <section className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center">
-            <LayoutDashboard className="text-primary w-6 h-6" />
+      <section className="flex flex-col md:flex-row md:items-center justify-between gap-8">
+        <div className="flex items-center gap-5">
+          <div className="w-14 h-14 bg-primary rounded-[20px] flex items-center justify-center shadow-2xl shadow-primary/30 rotate-3">
+            <LayoutDashboard className="text-white w-7 h-7 -rotate-3" />
           </div>
           <div>
-            <h1 className="font-headline font-black text-4xl tracking-tight text-on-surface">Analytics Hub</h1>
-            <p className="text-on-surface-variant opacity-50 font-medium">Panel de indicadores operativos y eficiencia por analista.</p>
+            <h1 className="font-headline font-black text-4xl tracking-tight text-on-surface uppercase">Dashboard</h1>
+            <p className="text-on-surface-variant/50 font-bold uppercase text-[10px] tracking-[0.2em] mt-1">Monitoreo de Casos y Rendimiento</p>
           </div>
         </div>
-        <RefreshButton />
+
       </section>
 
       {/* KPI Row */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {kpis.map((kpi) => (
-          <div key={kpi.label} className="bg-surface-container-low rounded-[2rem] p-8 flex flex-col gap-6 hover:bg-surface-container-low/80 transition-all border border-surface-variant/10 shadow-sm relative overflow-hidden group">
-            <div className={`w-14 h-14 ${kpi.bg} rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500`}>
-              <kpi.icon className={`w-7 h-7 ${kpi.color}`} />
+          <div key={kpi.label} className="bg-white/80 backdrop-blur-xl rounded-[40px] p-8 flex flex-col gap-6 hover:bg-white transition-all border border-outline-variant/30 shadow-sm relative overflow-hidden group hover:shadow-xl hover:-translate-y-1">
+            <div className={`w-16 h-16 ${kpi.bg} rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500 shadow-inner`}>
+              <kpi.icon className={`w-8 h-8 ${kpi.color}`} />
             </div>
             <div>
-              <p className="text-[11px] font-headline font-black uppercase tracking-[0.2em] opacity-40 mb-1">{kpi.label}</p>
-              <p className="font-headline font-black text-4xl text-on-surface tracking-tighter">{kpi.value}</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-on-surface-variant/40 mb-2">{kpi.label}</p>
+              <p className="font-headline font-black text-5xl text-on-surface tracking-tighter">{kpi.value}</p>
             </div>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700" />
           </div>
         ))}
       </section>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Left Column: Trend & Group Progress */}
-        <div className="space-y-8">
-          {/* Monthly Trend */}
-          <section className="bg-surface-container-low rounded-[2.5rem] p-10 border border-surface-variant/10 space-y-8 shadow-sm">
-            <h2 className="font-headline font-black text-xs uppercase tracking-[0.4em] text-on-surface-variant opacity-60 flex items-center gap-3">
-              <TrendingUp className="w-4 h-4 text-primary" /> Tendencia Mensual
-            </h2>
-            <div className="space-y-6">
-              {sortedMonths.map(([month, count]) => {
-                const max = Math.max(...Object.values(monthStats));
-                const height = (count / max) * 100;
-                return (
-                  <div key={month} className="space-y-2">
-                    <div className="flex justify-between items-center px-1">
-                      <span className="font-headline text-[13px] font-black text-on-surface">{month}</span>
-                      <span className="font-headline text-[13px] font-black text-primary">{count}</span>
-                    </div>
-                    <div className="h-2 w-full bg-surface-variant/10 rounded-full overflow-hidden">
-                      <div className="h-full bg-primary rounded-full" style={{ width: `${height}%` }}></div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        {/* Trends Section */}
+        <section className="lg:col-span-2 bg-white/80 backdrop-blur-xl rounded-[48px] p-12 border border-outline-variant/30 space-y-10 shadow-sm">
+          <div className="flex justify-between items-end">
+            <div>
+              <h2 className="font-headline font-black text-[11px] uppercase tracking-[0.5em] text-on-surface-variant/40 flex items-center gap-3 mb-2">
+                <TrendingUp className="w-4 h-4 text-primary" /> Tendencia Operativa
+              </h2>
+              <p className="text-2xl font-black text-on-surface tracking-tight">Evolución de Casos (6 Meses)</p>
+            </div>
+            <div className="flex gap-2">
+               <div className="px-4 py-1.5 bg-primary/5 rounded-full text-[10px] font-black text-primary uppercase tracking-widest">Sincronizado</div>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-6 gap-6 items-end h-64 pt-10">
+            {sortedMonths.map(([month, count]) => {
+              const max = Math.max(...Object.values(monthStats));
+              const height = (count / max) * 100;
+              return (
+                <div key={month} className="group relative flex flex-col items-center gap-4 h-full">
+                  <div className="absolute -top-8 bg-primary text-white text-[10px] font-black px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-all">
+                    {count}
+                  </div>
+                  <div className="w-full bg-surface-container-low rounded-2xl flex-1 relative overflow-hidden">
+                    <div 
+                      className="absolute bottom-0 left-0 right-0 bg-primary rounded-t-xl group-hover:bg-primary-container transition-all duration-700 ease-out" 
+                      style={{ height: `${height}%` }}
+                    >
+                       <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          </section>
+                  <span className="font-black text-[10px] text-on-surface-variant/40 uppercase tracking-widest">{month}</span>
+                </div>
+              );
+            })}
+          </div>
+        </section>
 
-          {/* Group Statistics */}
-          <section className="bg-surface-container-low rounded-[2.5rem] p-10 border border-surface-variant/10 space-y-8 shadow-sm">
-            <h2 className="font-headline font-black text-xs uppercase tracking-[0.4em] text-on-surface-variant opacity-60 flex items-center gap-3">
-              <Activity className="w-4 h-4 text-primary" /> Carga por Grupo Reportado
+        {/* Efficiency Sidebar */}
+        <section className="bg-primary rounded-[48px] p-12 space-y-10 shadow-2xl shadow-primary/30 text-white relative overflow-hidden">
+          <div className="relative z-10">
+            <h2 className="font-headline font-black text-[11px] uppercase tracking-[0.5em] text-white/40 flex items-center gap-3 mb-2">
+              <Users className="w-4 h-4 text-white/60" /> Analistas
             </h2>
-            <div className="space-y-6">
-              {Object.entries(groupPerformance)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 6)
-                .map(([group, count]) => {
-                  const max = Math.max(...Object.values(groupPerformance));
-                  const width = (count / max) * 100;
+            <p className="text-2xl font-black text-white tracking-tight mb-8">Rendimiento</p>
+            
+            <div className="space-y-4">
+              {Object.entries(agentPerformance)
+                .sort((a, b) => b[1].closed - a[1].closed)
+                .slice(0, 5)
+                .map(([agent, stats]) => {
+                  const efficiency = stats.count > 0 ? Math.round((stats.closed / stats.count) * 100) : 0;
                   return (
-                    <div key={group} className="space-y-2">
-                      <div className="flex justify-between items-center px-1">
-                        <span className="font-headline text-[12px] font-black text-on-surface truncate pr-4">{group}</span>
-                        <span className="font-headline text-[12px] font-black text-primary">{count}</span>
+                    <div key={agent} className="p-5 bg-white/10 backdrop-blur-md rounded-3xl border border-white/10 group hover:bg-white hover:text-primary transition-all duration-500">
+                      <div className="flex items-center justify-between mb-3">
+                         <span className="font-black text-[12px] truncate pr-4 uppercase tracking-tight">{agent}</span>
+                         <span className="text-[10px] font-black px-2 py-0.5 bg-white/20 rounded-full group-hover:bg-primary/10 group-hover:text-primary">{efficiency}%</span>
                       </div>
-                      <div className="h-1.5 w-full bg-surface-variant/10 rounded-full overflow-hidden">
-                        <div className="h-full bg-primary rounded-full" style={{ width: `${width}%` }}></div>
+                      <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden mb-3">
+                         <div className="h-full bg-white group-hover:bg-primary transition-all duration-700" style={{ width: `${efficiency}%` }} />
+                      </div>
+                      <div className="flex justify-between items-center opacity-60 group-hover:opacity-100">
+                         <span className="text-[9px] font-black uppercase tracking-widest">{stats.closed} Cerrados</span>
+                         <span className="text-[9px] font-black uppercase tracking-widest">{stats.totalTime > 0 ? `${Math.round(stats.totalTime / stats.count)}m` : '--'} Avg</span>
                       </div>
                     </div>
                   );
                 })}
             </div>
-          </section>
-        </div>
-
-        {/* Right Column: Agent Efficiency */}
-        <section className="bg-surface-container-low rounded-[2.5rem] p-10 border border-surface-variant/10 space-y-8 shadow-sm h-full">
-          <h2 className="font-headline font-black text-xs uppercase tracking-[0.4em] text-on-surface-variant opacity-60 flex items-center gap-3">
-            <Users className="w-4 h-4 text-primary" /> Eficiencia por Analista
-          </h2>
-          <div className="space-y-6">
-            {Object.entries(agentPerformance)
-              .sort((a, b) => b[1].closed - a[1].closed)
-              .slice(0, 8)
-              .map(([agent, stats]) => {
-                const efficiency = stats.count > 0 ? Math.round((stats.closed / stats.count) * 100) : 0;
-                return (
-                  <div key={agent} className="p-4 bg-surface-container-highest/20 rounded-2xl border border-surface-variant/5 group hover:bg-surface-container-highest transition-colors">
-                    <div className="flex items-center justify-between mb-2">
-                       <span className="font-headline text-xs font-black text-on-surface truncate pr-4 group-hover:text-primary transition-colors">{agent}</span>
-                       <span className="text-xs font-black text-secondary">{efficiency}% Efic.</span>
-                    </div>
-                    <div className="flex items-center gap-6">
-                      <div className="flex items-center gap-2">
-                         <CheckCircle2 className="w-3.5 h-3.5 text-success" />
-                         <span className="text-[10px] font-bold opacity-60">{stats.closed} Cerrados</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                         <Clock className="w-3.5 h-3.5 text-primary" />
-                         <span className="text-[10px] font-bold opacity-60">
-                           {stats.totalTime > 0 ? `${Math.round(stats.totalTime / stats.count)} min` : '--'}
-                         </span>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
           </div>
+          {/* Abstract Decorations */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32 blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/10 rounded-full -ml-24 -mb-24 blur-2xl" />
         </section>
       </div>
+
+      {/* Group Statistics - Full Width Cards */}
+      <section className="bg-white/80 backdrop-blur-xl rounded-[48px] p-12 border border-outline-variant/30 space-y-10 shadow-sm">
+         <h2 className="font-headline font-black text-[11px] uppercase tracking-[0.5em] text-on-surface-variant/40 flex items-center gap-3">
+            <Activity className="w-4 h-4 text-primary" /> Casos por Grupo
+         </h2>
+         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {Object.entries(groupPerformance)
+              .sort((a, b) => b[1] - a[1])
+              .slice(0, 8)
+              .map(([group, count]) => (
+                <div key={group} className="p-6 bg-surface-container-low rounded-3xl border border-outline-variant/10 group hover:border-primary/30 transition-all">
+                   <p className="text-[9px] font-black text-on-surface-variant/40 uppercase tracking-widest mb-2 truncate">{group}</p>
+                   <div className="flex items-end justify-between">
+                      <span className="text-3xl font-black text-on-surface">{count}</span>
+                      <div className="w-12 h-6 bg-primary/10 rounded-lg flex items-center justify-center">
+                         <TrendingUp className="w-3.5 h-3.5 text-primary" />
+                      </div>
+                   </div>
+                </div>
+              ))}
+         </div>
+      </section>
     </div>
   );
 }

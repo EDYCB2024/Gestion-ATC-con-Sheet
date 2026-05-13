@@ -1,77 +1,102 @@
-"use client";
+'use client'
 
-import React from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { 
-  LayoutDashboard, 
+import React from "react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import {
+  LayoutDashboard,
+  Settings,
+  Bell,
+  Zap,
   HelpCircle,
-  Table,
-  Users2,
-  Activity,
-  Wrench,
-  Ticket
-} from "lucide-react";
-
-const navigation = [
-  { label: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
-  { label: "Monitoreo", icon: Activity, href: "/" },
-  { label: "Casos (Tabla)", icon: Table, href: "/cases" },
-  { label: "Agentes", icon: Users2, href: "/agents" },
-  { label: "Servicio Técnico", icon: Wrench, href: "/technical-service" },
-  { label: "Tickets", icon: Ticket, href: "/tickets" },
-];
+  Ticket,
+  History,
+  Users
+} from "lucide-react"
+import { cn } from "@/lib/utils"
+import { useNotifications } from "@/components/providers/NotificationProvider"
 
 export function Sidebar() {
-  const pathname = usePathname();
+  const { unreadCount } = useNotifications()
+  const pathname = usePathname()
+
+  const NavItem = ({ href, icon: Icon, label, badge }: any) => {
+    const isActive = pathname === href || (href !== '/' && pathname?.startsWith(href))
+    return (
+      <Link
+        href={href}
+        className={cn(
+          "flex items-center justify-between px-5 py-3.5 rounded-2xl transition-all group relative",
+          isActive
+            ? "bg-primary text-white shadow-xl shadow-primary/20 scale-[1.02]"
+            : "text-on-surface-variant/70 hover:text-on-surface hover:bg-surface-container-low"
+        )}
+      >
+        <div className="flex items-center gap-3.5">
+          <Icon className={cn("w-5 h-5 transition-transform group-hover:scale-110", isActive ? "text-white" : "text-primary/60 group-hover:text-primary")} />
+          <span className="text-[13px] font-bold tracking-tight">{label}</span>
+        </div>
+        {badge && (
+          <span className={cn(
+            "px-2 py-0.5 rounded-lg text-[9px] font-black uppercase",
+            isActive ? "bg-white/20 text-white" : "bg-primary/10 text-primary"
+          )}>
+            {badge}
+          </span>
+        )}
+        {isActive && (
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-r-full" />
+        )}
+      </Link>
+    )
+  }
 
   return (
-    <aside className="h-screen w-64 fixed left-0 top-0 bg-surface-container-low flex flex-col p-6 z-50">
-      <div className="flex items-center gap-3 mb-10 pl-2">
-        <div className="w-9 h-9 bg-primary rounded-lg flex items-center justify-center shadow-sm">
-          <LayoutDashboard className="text-white w-5 h-5" />
-        </div>
-        <div className="flex flex-col">
-          <h2 className="font-headline font-black text-on-surface leading-tight tracking-tight">Editorial ATC</h2>
-          <span className="text-[10px] font-headline font-black uppercase tracking-[0.2em] text-primary opacity-50 leading-none">
-            Manager
-          </span>
+    <aside className="w-80 h-screen bg-surface-container-lowest border-r border-outline-variant/30 fixed left-0 top-0 flex flex-col z-50">
+      {/* Premium Logo Header */}
+      <div className="p-10 pb-6">
+        <div className="flex items-center gap-4 group cursor-pointer">
+          <div className="w-12 h-12 bg-primary rounded-[18px] flex items-center justify-center shadow-2xl shadow-primary/40 relative overflow-hidden transition-transform group-hover:scale-110">
+            <Zap className="text-white w-6 h-6 relative z-10" />
+            <div className="absolute inset-0 bg-white/20 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-headline font-black tracking-tighter text-on-surface uppercase leading-none">Control ATC</h2>
+            <div className="flex items-center gap-2 mt-1.5">
+              <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+              <p className="text-[9px] font-black text-on-surface-variant/40 uppercase tracking-[0.2em]">En línea</p>
+            </div>
+          </div>
         </div>
       </div>
 
-      <nav className="flex-1 space-y-2">
-        {navigation.map((item) => {
-          const isActive = pathname === item.href;
-          const Icon = item.icon;
-          
-          return (
-            <Link
-              key={item.label}
-              href={item.href}
-              className={`
-                flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 ease-in-out font-headline text-[11px] font-black uppercase tracking-[0.15em]
-                ${isActive 
-                  ? "bg-surface-container-lowest text-primary shadow-[0_4px_12px_rgba(0,0,0,0.03)]" 
-                  : "text-on-surface-variant opacity-60 hover:opacity-100 hover:bg-surface-container-low/80"
-                }
-              `}
-            >
-              <Icon className={`w-4 h-4 ${isActive ? "text-primary" : "text-on-surface-variant"}`} />
-              <span>{item.label}</span>
-            </Link>
-          );
-        })}
+      <nav className="flex-1 px-6 py-4 overflow-y-auto custom-scrollbar space-y-2">
+        <NavItem href="/dashboard" icon={LayoutDashboard} label="Dashboard" />
+        <NavItem href="/tickets" icon={Ticket} label="Tickets" badge="Live" />
+        <NavItem href="/cases" icon={History} label="Trazabilidad de Casos" />
+        <NavItem href="/groups" icon={Users} label="Cooperadores" />
+        <NavItem href="/notifications" icon={Bell} label="Historial de Notificaciones" badge={unreadCount > 0 ? unreadCount : null} />
       </nav>
 
-      <div className="mt-auto space-y-3 pt-6 border-t border-surface-variant/20">
-        <Link
-          href="/help"
-          className="flex items-center gap-4 px-4 py-2 text-on-surface-variant opacity-40 hover:opacity-100 transition-all font-headline text-[10px] font-black uppercase tracking-widest"
-        >
-          <HelpCircle className="w-4 h-4" />
-          <span>Help Center</span>
-        </Link>
+      {/* Bottom Profile / Settings */}
+      <div className="p-8 border-t border-outline-variant/20 bg-surface-container-low/20">
+        <div className="flex flex-col gap-2">
+          <Link
+            href="/settings"
+            className="flex items-center gap-3 px-4 py-3 rounded-2xl text-on-surface-variant/60 hover:text-primary hover:bg-white transition-all group"
+          >
+            <Settings className="w-5 h-5 transition-transform group-hover:rotate-90" />
+            <span className="text-xs font-bold uppercase tracking-widest">Ajustes</span>
+          </Link>
+          <Link
+            href="/help"
+            className="flex items-center gap-3 px-4 py-3 rounded-2xl text-on-surface-variant/60 hover:text-primary hover:bg-white transition-all group"
+          >
+            <HelpCircle className="w-5 h-5" />
+            <span className="text-xs font-bold uppercase tracking-widest">Ayuda</span>
+          </Link>
+        </div>
       </div>
     </aside>
-  );
+  )
 }

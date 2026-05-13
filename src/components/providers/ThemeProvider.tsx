@@ -34,14 +34,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem("atc-theme") as Theme;
-    const initialTheme = savedTheme || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-    
-    setTheme(initialTheme);
-    if (initialTheme === "dark") {
-      document.documentElement.classList.add("dark");
-      document.body.classList.add("dark");
-    }
+    // Force light theme to resolve cache conflicts and restore original look
+    setTheme("light");
+    document.documentElement.classList.remove("dark");
+    document.body.classList.remove("dark");
     setMounted(true);
   }, []);
 
